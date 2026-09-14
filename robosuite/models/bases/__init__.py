@@ -15,6 +15,8 @@ from .no_actuation_base import NoActuationBase
 from .floating_legged_base import FloatingLeggedBase
 from .null_base import NullBase
 from .spot_base import Spot, SpotFloating
+from .ridgeback_mobile_base import RidgebackMobileBase
+from .ridgeback_simple_base import RidgebackSimpleBase
 
 BASE_MAPPING = {
     "RethinkMount": RethinkMount,
@@ -27,6 +29,8 @@ BASE_MAPPING = {
     "Spot": Spot,
     "SpotFloating": SpotFloating,
     "NullBase": NullBase,
+    "RidgebackMobileBase": RidgebackMobileBase,
+    "RidgebackSimpleBase": RidgebackSimpleBase,
 }
 
 ALL_BASES = BASE_MAPPING.keys()

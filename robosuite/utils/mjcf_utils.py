@@ -88,6 +88,7 @@ MUJOCO_NAMED_ATTRIBUTES = {
     "target",
     "prefix",
     "site",
+    "model"
 }
 
 IMAGE_CONVENTION_MAPPING = {
@@ -562,6 +563,11 @@ def add_prefix(
     # Check the current element for matching conditions
     if (tags == "default" or root.tag in tags) and (exclude is None or not exclude(root)):
         for attrib in attribs:
+            # This names a body inside the external model.
+            # The attach's "prefix" handles naming the imported bodies.
+            if root.tag == "attach" and attrib == "body":
+                continue
+
             v = root.get(attrib, None)
             # Only add prefix if the attribute exist, the current attribute doesn't already begin with prefix,
             # and the @exclude filter is either None or returns False

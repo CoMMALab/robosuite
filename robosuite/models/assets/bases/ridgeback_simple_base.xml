@@ -1,0 +1,307 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mujoco model="ridgeback_simple">
+  <default>
+    <default class="robot" />
+    <default class="visual">
+      <geom contype="0" conaffinity="0" group="1" />
+    </default>
+    <default class="collision">
+      <geom contype="0" conaffinity="1" group="0" />
+    </default>
+  </default>
+  <compiler angle="radian" balanceinertia="true" />
+  <asset>
+    <material name="light_grey" rgba="0.4 0.4 0.4 1.0" />
+    <material name="white" rgba="0.9 0.9 0.9 1.0" />
+    <material name="yellow" rgba="0.8 0.8 0.0 1.0" />
+    <material name="black" rgba="0.15 0.15 0.15 1.0" />
+    <mesh name="chassis_link_collision_body_collision" file="meshes/ridgeback_base/body-collision.stl" />
+    <mesh name="chassis_link_body" file="meshes/ridgeback_base/body.stl" />
+    <mesh name="top_link_collision_top" file="meshes/ridgeback_base/top.stl" />
+    <mesh name="top_link_top" file="meshes/ridgeback_base/top.stl" />
+    <mesh name="right_side_cover_link_side_cover" file="meshes/ridgeback_base/side-cover.stl" />
+    <mesh name="front_cover_link_end_cover" file="meshes/ridgeback_base/end-cover.stl" />
+    <mesh name="front_lights_link_lights" file="meshes/ridgeback_base/lights.stl" />
+    <mesh name="axle_link_axle" file="meshes/ridgeback_base/axle.stl" />
+    <mesh name="front_rocker_link_rocker" file="meshes/ridgeback_base/rocker.stl" />
+    <mesh name="front_left_wheel_link_wheel" file="meshes/ridgeback_base/wheel.stl" />
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072" />
+  </asset>
+  <worldbody>
+    <body name="base_link" pos="0 0 0.0262">
+      <site name="center" pos="0 0 0" />
+      <body name="chassis_link">
+        <inertial pos="0.012 0.002 0.067" quat="0.5 0.5 0.5 0.5" mass="165.304" diaginertia="4.4744 7.1624 4.6155" />
+        <geom name="chassis_link_collision" type="mesh" mesh="chassis_link_collision_body_collision" class="collision" />
+        <geom name="chassis_link_visual" type="mesh" mesh="chassis_link_body" material="black" class="visual" />
+        <body name="riser_link" pos="0 0 0.22">
+          <geom name="riser_link_collision" pos="0 0 0.0275" quat="0.9239 0 0 0.3827" type="box" size="0.2465 0.2465 0.0275" class="collision" />
+          <geom name="riser_link_visual" pos="0 0 0.0275" quat="0.9239 0 0 0.3827" type="box" size="0.2465 0.2465 0.0275" material="light_grey" class="visual" />
+          <body name="top_link" pos="0 0 -0.22000000000000003">
+            <geom name="top_link_collision" type="mesh" mesh="top_link_collision_top" class="collision" />
+            <geom name="top_link_visual" type="mesh" mesh="top_link_top" material="black" class="visual" />
+          </body>
+          <body name="mid_mount" pos="0 0 0.06">
+            <body name="support" />
+          </body>
+        </body>
+        <body name="right_side_cover_link">
+          <geom name="right_side_cover_link_visual" type="mesh" mesh="right_side_cover_link_side_cover" material="yellow" class="visual" />
+        </body>
+        <body name="left_side_cover_link">
+          <geom name="left_side_cover_link_visual" quat="0 0 0 1" type="mesh" mesh="right_side_cover_link_side_cover" material="yellow" class="visual" />
+        </body>
+        <body name="front_cover_link">
+          <geom name="front_cover_link_visual" type="mesh" mesh="front_cover_link_end_cover" material="black" class="visual" />
+        </body>
+        <body name="rear_cover_link">
+          <geom name="rear_cover_link_visual" quat="0 0 0 1" type="mesh" mesh="front_cover_link_end_cover" material="black" class="visual" />
+        </body>
+        <body name="front_lights_link">
+          <geom name="front_lights_link_visual" type="mesh" mesh="front_lights_link_lights" material="white" class="visual" />
+        </body>
+        <body name="rear_lights_link">
+          <geom name="rear_lights_link_visual" quat="0 0 0 1" type="mesh" mesh="front_lights_link_lights" material="black" class="visual" />
+        </body>
+        <body name="axle_link" pos="0 0 0.05">
+          <geom name="axle_link_visual" quat="0.7071 0 0.7071 0" type="mesh" mesh="axle_link_axle" material="black" class="visual" />
+          <body name="front_rocker_link" pos="0.319 0 0">
+            <inertial pos="0 0 0" quat="0.5 0.5 0.5 0.5" mass="10.267" diaginertia="0.0288 0.4324 0.413" />
+            <geom name="front_rocker_link_visual" quat="0.5 0.5 0.5 0.5" type="mesh" mesh="front_rocker_link_rocker" material="black" class="visual" />
+            <body name="front_left_wheel_link" pos="0 0.27549999999999997 0" quat="1 0 0 0">
+              <body name="front_left_wheel" pos="0 0 0">
+                <inertial pos="0 0 0" quat="1 0 0 0" mass="2.3" diaginertia="0.0033212 0.0066424 0.0033212" />
+                <geom size="0.026 0.0395" quat="0.707107 0.707107 0 0" type="cylinder" rgba="0.2 0.2 0.2 0.5" contype="0" conaffinity="0" group="1" />
+                <body name="front_left_mecanum_1_roller_0_link" pos="0.0271318677175 0 -0.00726996204405">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_left_mecanum_1_roller_1_link" pos="0.0271318677175 0 0.00726996204405">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_left_mecanum_1_roller_2_link" pos="0.0198619056734 0 0.0198619056734">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_left_mecanum_1_roller_3_link" pos="0.00726996204405 0 0.0271318677175">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_left_mecanum_1_roller_4_link" pos="-0.00726996204405 0 0.0271318677175">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_left_mecanum_1_roller_5_link" pos="-0.0198619056734 0 0.0198619056734">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_left_mecanum_1_roller_6_link" pos="-0.0271318677175 0 0.00726996204405">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_left_mecanum_1_roller_7_link" pos="-0.0271318677175 0 -0.00726996204405">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_left_mecanum_1_roller_8_link" pos="-0.0198619056734 0 -0.0198619056734">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_left_mecanum_1_roller_9_link" pos="-0.00726996204405 0 -0.0271318677175">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_left_mecanum_1_roller_10_link" pos="0.00726996204405 0 -0.0271318677175">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_left_mecanum_1_roller_11_link" pos="0.0198619056734 0 -0.0198619056734">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+              </body>
+            </body>
+            <body name="front_right_wheel_link" pos="0 -0.27549999999999997 0" quat="1 0 0 0">
+              <body name="front_right_wheel" pos="0 0 0">
+                <inertial pos="0 0 0" quat="1 0 0 0" mass="2.3" diaginertia="0.0033212 0.0066424 0.0033212" />
+                <geom size="0.026 0.0395" quat="0.707107 0.707107 0 0" type="cylinder" rgba="0.2 0.2 0.2 0.5" contype="0" conaffinity="0" group="1" />
+                <body name="front_right_mecanum_2_roller_0_link" pos="0.0271318677175 0 -0.00726996204405">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_right_mecanum_2_roller_1_link" pos="0.0271318677175 0 0.00726996204405">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_right_mecanum_2_roller_2_link" pos="0.0198619056734 0 0.0198619056734">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_right_mecanum_2_roller_3_link" pos="0.00726996204405 0 0.0271318677175">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_right_mecanum_2_roller_4_link" pos="-0.00726996204405 0 0.0271318677175">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_right_mecanum_2_roller_5_link" pos="-0.0198619056734 0 0.0198619056734">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_right_mecanum_2_roller_6_link" pos="-0.0271318677175 0 0.00726996204405">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_right_mecanum_2_roller_7_link" pos="-0.0271318677175 0 -0.00726996204405">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_right_mecanum_2_roller_8_link" pos="-0.0198619056734 0 -0.0198619056734">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_right_mecanum_2_roller_9_link" pos="-0.00726996204405 0 -0.0271318677175">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_right_mecanum_2_roller_10_link" pos="0.00726996204405 0 -0.0271318677175">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="front_right_mecanum_2_roller_11_link" pos="0.0198619056734 0 -0.0198619056734">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+              </body>
+            </body>
+          </body>
+          <body name="rear_rocker_link" pos="-0.319 0 0">
+            <inertial pos="0 0 0" quat="0.5 0.5 0.5 0.5" mass="10.267" diaginertia="0.0288 0.4324 0.413" />
+            <geom name="rear_rocker_link_visual" quat="0.5 0.5 0.5 0.5" type="mesh" mesh="front_rocker_link_rocker" material="black" class="visual" />
+            <body name="rear_left_wheel_link" pos="0 0.27549999999999997 0" quat="1 0 0 0">
+              <body name="rear_left_wheel" pos="0 0 0">
+                <inertial pos="0 0 0" quat="1 0 0 0" mass="2.3" diaginertia="0.0033212 0.0066424 0.0033212" />
+                <geom size="0.026 0.0395" quat="0.707107 0.707107 0 0" type="cylinder" rgba="0.2 0.2 0.2 0.5" contype="0" conaffinity="0" group="1" />
+                <body name="rear_left_mecanum_2_roller_0_link" pos="0.0271318677175 0 -0.00726996204405">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_left_mecanum_2_roller_1_link" pos="0.0271318677175 0 0.00726996204405">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_left_mecanum_2_roller_2_link" pos="0.0198619056734 0 0.0198619056734">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_left_mecanum_2_roller_3_link" pos="0.00726996204405 0 0.0271318677175">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_left_mecanum_2_roller_4_link" pos="-0.00726996204405 0 0.0271318677175">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_left_mecanum_2_roller_5_link" pos="-0.0198619056734 0 0.0198619056734">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_left_mecanum_2_roller_6_link" pos="-0.0271318677175 0 0.00726996204405">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_left_mecanum_2_roller_7_link" pos="-0.0271318677175 0 -0.00726996204405">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_left_mecanum_2_roller_8_link" pos="-0.0198619056734 0 -0.0198619056734">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_left_mecanum_2_roller_9_link" pos="-0.00726996204405 0 -0.0271318677175">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_left_mecanum_2_roller_10_link" pos="0.00726996204405 0 -0.0271318677175">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_left_mecanum_2_roller_11_link" pos="0.0198619056734 0 -0.0198619056734">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+              </body>
+            </body>
+            <body name="rear_right_wheel_link" pos="0 -0.27549999999999997 0" quat="1 0 0 0">
+              <body name="rear_right_wheel" pos="0 0 0">
+                <inertial pos="0 0 0" quat="1 0 0 0" mass="2.3" diaginertia="0.0033212 0.0066424 0.0033212" />
+                <geom size="0.026 0.0395" quat="0.707107 0.707107 0 0" type="cylinder" rgba="0.2 0.2 0.2 0.5" contype="0" conaffinity="0" group="1" />
+                <body name="rear_right_mecanum_1_roller_0_link" pos="0.0271318677175 0 -0.00726996204405">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_right_mecanum_1_roller_1_link" pos="0.0271318677175 0 0.00726996204405">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_right_mecanum_1_roller_2_link" pos="0.0198619056734 0 0.0198619056734">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_right_mecanum_1_roller_3_link" pos="0.00726996204405 0 0.0271318677175">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_right_mecanum_1_roller_4_link" pos="-0.00726996204405 0 0.0271318677175">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_right_mecanum_1_roller_5_link" pos="-0.0198619056734 0 0.0198619056734">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_right_mecanum_1_roller_6_link" pos="-0.0271318677175 0 0.00726996204405">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_right_mecanum_1_roller_7_link" pos="-0.0271318677175 0 -0.00726996204405">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_right_mecanum_1_roller_8_link" pos="-0.0198619056734 0 -0.0198619056734">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_right_mecanum_1_roller_9_link" pos="-0.00726996204405 0 -0.0271318677175">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_right_mecanum_1_roller_10_link" pos="0.00726996204405 0 -0.0271318677175">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+                <body name="rear_right_mecanum_1_roller_11_link" pos="0.0198619056734 0 -0.0198619056734">
+                  <inertial pos="0 0 0" quat="1 0 0 0" mass="0.001" diaginertia="9.14357591915e-07 9.14357591915e-07 9.14357591915e-07" />
+                  <geom size="0.047811023622" quat="1 0 0 0" type="sphere" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" condim="3" friction="1 0 0" group="1" />
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+        <body name="imu_link" pos="0.2085 -0.2902 0.1681">
+          <inertial pos="0 0 0" mass="0.001" diaginertia="1e-09 1e-09 1e-09" />
+        </body>
+      </body>
+      <joint name="joint_mobile_forward" pos="0 0 0" axis="1 0 0" type="slide" limited="false" damping="0" armature="0" frictionloss="250" />
+      <joint name="joint_mobile_side" pos="0 0 0" axis="0 1 0" type="slide" limited="false" damping="0" armature="0" frictionloss="250" />
+      <joint name="joint_mobile_yaw" pos="0 0 0" axis="0 0 1" type="hinge" limited="false" damping="0" armature="0" frictionloss="250" />
+    </body>
+  </worldbody>
+  <actuator>
+    <velocity ctrllimited="true" ctrlrange="-1.00 1.00" joint="joint_mobile_forward" kv="1000" name="actuator_mobile_forward" forcelimited="true" forcerange="-600 600" />
+    <velocity ctrllimited="true" ctrlrange="-1.00 1.00" joint="joint_mobile_side" kv="1000" name="actuator_mobile_side" forcelimited="true" forcerange="-600 600" />
+    <velocity ctrllimited="true" ctrlrange="-1.50 1.50" joint="joint_mobile_yaw" kv="1500" name="actuator_mobile_yaw" forcelimited="true" forcerange="-600 600" />
+  </actuator>
+</mujoco>
