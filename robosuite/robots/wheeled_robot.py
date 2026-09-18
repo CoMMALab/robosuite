@@ -116,8 +116,12 @@ class WheeledRobot(MobileRobot):
             self.action_dim, len(action)
         )
 
-        # self.composite_controller.update_state() # remove this for now, messes up base velocity calculation
         if policy_step:
+            # Arm goals must use the current chassis pose, including immediately
+            # after scene placement / a reset changes the base joints.
+            self.composite_controller.update_state()
+            for arm in self.arms:
+                self.part_controllers[arm].update(force=True)
             self.composite_controller.set_goal(action)
 
         applied_action_dict = self.composite_controller.run_controller(self._enabled_parts)

@@ -1,3 +1,4 @@
+import mujoco
 import numpy as np
 
 import robosuite.utils.transform_utils as T
@@ -199,23 +200,29 @@ class MobileBaseJointVelocityController(MobileBaseController):
         else:
             scaled_delta = None
 
-        curr_pos, curr_ori = self.get_base_pose()
+        # Commands are [forward, left, yaw] in the CURRENT chassis frame.
+        # Use the actual joint kinematics, not yaw relative to reset: a reset
+        # can occur with a nonzero yaw joint, and the slide axes do not rotate
+        # with that joint. The Jacobian also accounts for an offset yaw pivot.
+        _, curr_ori = self.get_base_pose()
+        model, data = self.sim.model._model, self.sim.data._data
+        site_id = self.sim.model.site_name2id(f"{self.naming_prefix}center")
+        jac_pos = np.zeros((3, model.nv))
+        jac_rot = np.zeros((3, model.nv))
+        mujoco.mj_jacSite(model, data, jac_pos, jac_rot, site_id)
+        jac = np.vstack((jac_pos[:2], jac_rot[2:3]))[:, self.qvel_index]
 
-        # transform the action relative to initial base orientation
-        init_theta = T.mat2euler(self.init_ori)[2]  # np.arctan2(self.init_pos[1], self.init_pos[0])
-        curr_theta = T.mat2euler(curr_ori)[2]  # np.arctan2(curr_pos[1], curr_pos[0])
-        theta = curr_theta - init_theta
-
-        # input raw base action is delta relative to current pose of base
-        # controller expects deltas relative to initial pose of base at start of episode
-        # transform deltas from current base pose coordinates to initial base pose coordinates
-        x, y = action[0:2]
-
-        # do the reverse of theta rotation
-        action[0] = x * np.cos(theta) + y * np.sin(theta)
-        action[1] = -x * np.sin(theta) + y * np.cos(theta)
-
-        self.goal_qvel = action
+        # run_controller maps normalized goals to actuator velocity ranges.
+        # Do the frame conversion in physical units, then undo that mapping.
+        bias = 0.5 * (self.actuator_max + self.actuator_min)
+        weight = 0.5 * (self.actuator_max - self.actuator_min)
+        body_velocity = bias + weight * scaled_delta
+        world_linear = curr_ori @ np.array([*body_velocity[:2], 0.0])
+        world_angular = curr_ori @ np.array([0.0, 0.0, body_velocity[2]])
+        joint_velocity = np.linalg.solve(jac, np.r_[world_linear[:2], world_angular[2]])
+        self.goal_qvel = (joint_velocity - bias) / weight
+        # Uniform saturation preserves translation direction for diagonal input.
+        self.goal_qvel /= max(1.0, np.max(np.abs(self.goal_qvel)))
         if self.interpolator is not None:
             self.interpolator.set_goal(self.goal_qvel)
 
@@ -305,11 +312,8 @@ class LegacyMobileBaseJointVelocityController(MobileBaseJointVelocityController)
     """
     Legacy version of MobileBaseJointVelocityController, created to address
     the recent change in the axis of the forward joint in the mobile base xml.
-    This controller is identical to the original MobileBaseJointVelocityController,
-    except that it dynamically checks the axis of the forward joint and reorders
-    the input action accordingly if the forward axis is the y axis instead of the x axis.
-    This allows for backwards compatibility with previously collected datasets
-    that were generated using older versions of the mobile base xml.
+    Retains the historical Y-forward mapping for previously collected datasets.
+    X-forward models use the current chassis-frame conversion in the parent.
     """
 
     def __init__(self, *args, **kwargs):
@@ -330,6 +334,9 @@ class LegacyMobileBaseJointVelocityController(MobileBaseJointVelocityController)
         return forward_jnt is not None and (forward_jnt_axis == np.array([0, 1, 0])).all()
 
     def set_goal(self, action, set_qpos=None):
+        if not self._check_forward_joint_reversed():
+            return super().set_goal(action, set_qpos=set_qpos)
+
         # Update state
         self.update()
 
@@ -361,22 +368,11 @@ class LegacyMobileBaseJointVelocityController(MobileBaseJointVelocityController)
         curr_theta = T.mat2euler(curr_ori)[2]  # np.arctan2(curr_pos[1], curr_pos[0])
         theta = curr_theta - init_theta
 
-        # reorder action if forward axis is y axis
-        if self._check_forward_joint_reversed():
-            action = np.copy([action[i] for i in [1, 0, 2]])
-
-            x, y = action[0:2]
-            # do the reverse of theta rotation
-            action[0] = x * np.cos(theta) + y * np.sin(theta)
-            action[1] = -x * np.sin(theta) + y * np.cos(theta)
-        else:
-            # input raw base action is delta relative to current pose of base
-            # controller expects deltas relative to initial pose of base at start of episode
-            # transform deltas from current base pose coordinates to initial base pose coordinates
-            action = action.copy()
-            x, y = action[0:2]
-            action[0] = x * np.cos(theta) - y * np.sin(theta)
-            action[1] = x * np.sin(theta) + y * np.cos(theta)
+        # Historical Y-forward convention; X-forward models returned above.
+        action = np.copy([action[i] for i in [1, 0, 2]])
+        x, y = action[0:2]
+        action[0] = x * np.cos(theta) + y * np.sin(theta)
+        action[1] = -x * np.sin(theta) + y * np.cos(theta)
 
         self.goal_qvel = action
         if self.interpolator is not None:

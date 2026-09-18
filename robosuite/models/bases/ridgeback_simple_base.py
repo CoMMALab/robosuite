@@ -21,5 +21,13 @@ class RidgebackSimpleBase(MobileBaseModel):
         return np.array((0, 0, 0))
 
     @property
+    def bottom_offset(self):
+        # The standalone MJCF places base_link 0.0262 m above the floor.
+        # This property is a vector FROM base_link TO the floor, not the
+        # positive world-space spawn height stored in the XML. robosuite
+        # subtracts it in set_base_xpos() after attaching the base model.
+        return np.array((0, 0, -0.0262))
+
+    @property
     def horizontal_radius(self):
         return 0.48
