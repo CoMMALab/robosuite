@@ -112,7 +112,7 @@ class MujocoEnv(metaclass=EnvMeta):
         # Rendering-specific attributes
         self.has_renderer = has_renderer
         # offscreen renderer needed for on-screen rendering
-        self.has_offscreen_renderer = (has_renderer and renderer != "mjviewer") or has_offscreen_renderer
+        self.has_offscreen_renderer = (has_renderer and renderer not in {"mjviewer", "mjviser"}) or has_offscreen_renderer
         if render_camera is not None and isinstance(render_camera, str):
             render_camera = [render_camera]
         self.render_camera = render_camera
@@ -193,6 +193,11 @@ class MujocoEnv(metaclass=EnvMeta):
 
         if self.renderer == "mujoco":
             pass
+        elif self.renderer == "mjviser":
+            from robosuite.renderers.viewer.mjviser_renderer import MjviserRenderer
+
+            if self.has_renderer and self.viewer is None:
+                self.viewer = MjviserRenderer(env=self, **self.renderer_config)
         elif self.renderer == "mjviewer":
             from robosuite.renderers.viewer import MjviewerRenderer
 
@@ -204,7 +209,7 @@ class MujocoEnv(metaclass=EnvMeta):
             self.viewer = MjviewerRenderer(env=self, camera_id=camera_id, **self.renderer_config)
         else:
             raise ValueError(
-                f"{self.renderer} is not a valid renderer name. Valid options include mjviewer (native mujoco renderer), mujoco"
+                f"{self.renderer} is not a valid renderer name. Valid options include mjviser, mjviewer (native mujoco renderer), mujoco"
             )
 
     def initialize_time(self, control_freq):
@@ -372,7 +377,7 @@ class MujocoEnv(metaclass=EnvMeta):
                         camera_ids.append(camera_id)
                     self.viewer.set_camera(camera_ids)
 
-            elif self.renderer == "mjviewer":
+            elif self.renderer in {"mjviewer", "mjviser"}:
                 self.initialize_renderer()
 
         if self.has_offscreen_renderer:
@@ -511,7 +516,7 @@ class MujocoEnv(metaclass=EnvMeta):
 
         if self.viewer is not None and self.renderer != "mujoco":
             self.viewer.update()
-        elif self.has_renderer and self.renderer == "mjviewer" and self.viewer is None:
+        elif self.has_renderer and self.renderer in {"mjviewer", "mjviser"} and self.viewer is None:
             # need to launch again after it was destroyed
             self.initialize_renderer()
             # so that mujoco viewer renders
@@ -658,7 +663,12 @@ class MujocoEnv(metaclass=EnvMeta):
             xml_string (str): Filepath to the xml file that will be loaded directly into the sim
         """
 
-        self.close()
+        if self.renderer == "mjviser":
+            # Dataset episodes replace the model, but the browser connection
+            # belongs to the environment and should survive the reload.
+            self._destroy_sim()
+        else:
+            self.close()
 
         # Since we are reloading from an xml_string, we are deterministically resetting
         self.deterministic_reset = True
